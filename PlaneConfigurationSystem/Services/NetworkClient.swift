@@ -48,25 +48,20 @@ class NetworkClient: NetworkClientProtocol {
     }
     
     static func fetch(url: URL, category: String, handler: @escaping (Result<Data, Error>) -> Void) {
-        // 1. Create URLComponents from the original URL
         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
         
-        // 2. Define the query parameters to be added
         let queryParams = [
             "category": category
         ]
         
-        // 3. Convert dictionary to URLQueryItems and add them to URLComponents
         let queryItems = queryParams.map { URLQueryItem(name: $0.key, value: $0.value) }
         urlComponents?.queryItems = queryItems
         
-        // 4. Get the modified URL with query parameters
         guard let modifiedURL = urlComponents?.url else {
             handler(.failure(NetworkError.invalidURL))
             return
         }
         
-        // 5. Create URLRequest with the modified URL
         var request = URLRequest(url: modifiedURL)
         request.httpMethod = "GET"
         request.timeoutInterval = 3
