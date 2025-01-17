@@ -68,7 +68,6 @@ class NetworkClient: NetworkClientProtocol {
         
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error {
-                // Проверяем на отсутствие соединения
                 if (error as NSError).domain == NSURLErrorDomain && (error as NSError).code == NSURLErrorNotConnectedToInternet {
                     handler(.failure(NetworkError.noInternetConnection))
                 } else {

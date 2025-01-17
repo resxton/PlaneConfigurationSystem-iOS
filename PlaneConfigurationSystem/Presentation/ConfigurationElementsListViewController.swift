@@ -142,14 +142,21 @@ final class ConfigurationElementsListViewController: UIViewController, UITableVi
             switch result {
             case .success(let elementsList):
                 self.configurationElements = elementsList.configurationElements
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
                     self.elementsTable.reloadData()
                 }
             case .failure(let error):
                 print("Failed to load data: \(error.localizedDescription)")
                 self.configurationElements = mockData
-                DispatchQueue.main.async {
-                    self.elementsTable.reloadData()
+                
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
+                    let alert = UIAlertController(title: "Ошибка загрузки", message: "Используются моки", preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: "Ок", style: .cancel, handler: { _ in
+                        self.elementsTable.reloadData()
+                    }))
+                    self.present(alert, animated: true)
                 }
             }
         }
@@ -162,14 +169,16 @@ final class ConfigurationElementsListViewController: UIViewController, UITableVi
             switch result {
             case .success(let elementsList):
                 self.configurationElements = elementsList.configurationElements
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
                     self.elementsTable.reloadData()
                 }
             case .failure(let error):
                 print("Failed to load data: \(error.localizedDescription)")
                 self.configurationElements = mockData
                 mockFlag = true
-                DispatchQueue.main.async {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self else { return }
                     self.elementsTable.reloadData()
                 }
             }
@@ -187,8 +196,8 @@ final class ConfigurationElementsListViewController: UIViewController, UITableVi
         selectedCategory = "Все категории"
         categoryPicker.selectRow(0, inComponent: 0, animated: true)  // Сбросить выбор в пикере на первую категорию ("Все категории")
 
-        // Завершаем анимацию обновления
-        DispatchQueue.main.async {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
             self.elementsTable.refreshControl?.endRefreshing()
         }
     }
